@@ -24,7 +24,7 @@ public class VirusManager : MonoBehaviour {
         row.Add(newEnemy.transform);
         pos += new Vector3(1.2f, 0f, 0f);
         row.RemoveAll(e => e == null);
-        if (15 <= row.Count)
+        if (12 < row.Count)
           state.Gameover();
       }
       foreach (var row in enemiesArray) {

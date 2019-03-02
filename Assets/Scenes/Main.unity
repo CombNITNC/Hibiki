@@ -805,7 +805,6 @@ MonoBehaviour:
   - {fileID: 4131310205499404924, guid: ff3d5f3b7d6cb46049b42c362d57f906, type: 3}
   - {fileID: 6775560326379179903, guid: c5920fc4b55bc450988e5152bf0ddef9, type: 3}
   - {fileID: 1377608698943809507, guid: 9ed24a1382d5343818785ac08a889a0b, type: 3}
-  - {fileID: 6775560326379179903, guid: c5920fc4b55bc450988e5152bf0ddef9, type: 3}
   - {fileID: 4131310205499404924, guid: ff3d5f3b7d6cb46049b42c362d57f906, type: 3}
   spawnRate: 3.5
 --- !u!4 &1018501441
@@ -853,6 +852,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameoverDisplay: {fileID: 23133689}
   player: {fileID: 262670789}
+  burst: {fileID: 0}
 --- !u!4 &1301023367
 Transform:
   m_ObjectHideFlags: 0

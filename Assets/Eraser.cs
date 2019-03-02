@@ -7,6 +7,8 @@ public class Eraser : MonoBehaviour {
   EnemyGrade grade;
   bool willErase = false;
 
+  [SerializeField] GameObject burst;
+
   void Start() {
     grade = GetComponent<EnemyInfo>().GetGrade();
   }
@@ -30,8 +32,7 @@ public class Eraser : MonoBehaviour {
     backHits.CopyTo(aroundEnemy, rightHits.Length + leftHits.Length + forwardHits.Length);
     foreach (var hit in aroundEnemy) {
       var info = hit.transform.GetComponent<EnemyInfo>();
-      var hitGrade = info.GetGrade();
-      if (info != null && hitGrade - lookGrade == 1) {
+      if (info != null && info.GetGrade() - lookGrade == 1) {
         var eraser = hit.transform.GetComponent<Eraser>();
         willErase = true;
         if (eraser) eraser.Activate(callback, lookGrade);
@@ -39,6 +40,9 @@ public class Eraser : MonoBehaviour {
         Destroy(gameObject);
         callback();
       }
+    }
+    if (willErase) {
+      Instantiate(burst, transform.position, Quaternion.identity);
     }
   }
 }
