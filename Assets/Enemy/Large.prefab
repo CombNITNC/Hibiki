@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 4131310205499404921}
   - component: {fileID: 4131310205499404926}
   - component: {fileID: 4131310205499404923}
-  - component: {fileID: 6340906808837402053}
   m_Layer: 0
   m_Name: Large
   m_TagString: Enemy
@@ -102,20 +101,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 4131310205499404924}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b00ac7096233244f593c778c1eac7ea5, type: 3}
+  m_Script: {fileID: 11500000, guid: 2e9d3632e50184e9a9d08ea51eaca2e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grade: 2
---- !u!114 &6340906808837402053
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4131310205499404924}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbe1b1d4c8c3a47ec8da5e6173a3f0a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  burst: {fileID: 8400931172028890220, guid: 7ec4de31ab60a41e4a3356bb9a016d6d, type: 3}
+  grade: 3
+  cracked: {fileID: 4300000, guid: 503053e49311f45f1a0d70eed4d9c356, type: 3}

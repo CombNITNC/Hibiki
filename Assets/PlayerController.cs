@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerPositioner), typeof(VirusCapturer), typeof(ScoreManager))] public class PlayerController : MonoBehaviour {
+[RequireComponent(typeof(PlayerPositioner), typeof(VirusManager))] public class PlayerController : MonoBehaviour {
   PlayerPositioner positioner;
-  ScoreManager scoreManager;
-  VirusCapturer capturer;
+  VirusManager viruses;
   // Start is called before the first frame update
   void Start() {
     positioner = GetComponent<PlayerPositioner>();
-    capturer = GetComponent<VirusCapturer>();
-    scoreManager = GetComponent<ScoreManager>();
+    viruses = GetComponent<VirusManager>();
   }
 
   bool atomic = false;
@@ -30,11 +28,16 @@ using UnityEngine;
       });
     } else if (Input.GetButtonDown("Capture")) {
       atomic = true;
-      capturer.Capture(delegate() {
-        atomic = false;
-      }, delegate() {
-        scoreManager.Point(10);
-      });
+      var held = viruses.GetHeld();
+      Debug.Log(held);
+      if (held != null)
+        viruses.Take(2 + positioner.GetPosition(), delegate() {
+          atomic = false;
+        });
+      else
+        viruses.Place(2 + positioner.GetPosition(), delegate() {
+          atomic = false;
+        });
     }
   }
 }

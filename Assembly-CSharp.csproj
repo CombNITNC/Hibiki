@@ -53,14 +53,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\EnemyInfo.cs" />
-     <Compile Include="Assets\Eraser.cs" />
      <Compile Include="Assets\GameState.cs" />
      <Compile Include="Assets\ParticleDisposer.cs" />
      <Compile Include="Assets\PlayerController.cs" />
      <Compile Include="Assets\PlayerPositioner.cs" />
      <Compile Include="Assets\ScoreManager.cs" />
-     <Compile Include="Assets\VirusCapturer.cs" />
+     <Compile Include="Assets\Virus.cs" />
      <Compile Include="Assets\VirusManager.cs" />
  <Reference Include="Unity.TextMeshPro.Editor">
  <HintPath>/Users/rkeclair/Documents/Projects/Games/Hibiki/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
