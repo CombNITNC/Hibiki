@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum EnemyGrade {
+  None,
   Small,
   Medium,
   Large
