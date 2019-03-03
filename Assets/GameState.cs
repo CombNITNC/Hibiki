@@ -12,6 +12,11 @@ public class GameState : MonoBehaviour {
   public void Gameover() {
     if (isOver) return;
     isOver = true;
+    StartCoroutine(GameoverWork());
+  }
+
+  IEnumerator GameoverWork() {
+    yield return new WaitForSeconds(1f);
     gameoverDisplay.SetActive(true);
     Instantiate(burst, player.position, Quaternion.identity);
     Destroy(player.gameObject);

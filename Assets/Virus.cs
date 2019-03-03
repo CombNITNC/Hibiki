@@ -15,11 +15,19 @@ public class Virus : MonoBehaviour {
   [SerializeField] EnemyGrade grade = EnemyGrade.None;
   [SerializeField] Mesh cracked;
 
+  int hitPoint = 0;
+
+  static int globalId = 0;
+
+  public readonly int id = ++globalId;
+
   public EnemyGrade GetGrade() {
     return grade;
   }
 
-  int hitPoint = 0;
+  public int GetHP() {
+    return hitPoint;
+  }
 
   public void Hit() {
     ++hitPoint;

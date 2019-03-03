@@ -79,52 +79,57 @@ public class VirusManager : MonoBehaviour {
 
   public delegate void Callback();
 
-  public void Take(int rowIndex, Callback callback) {
+  public void Take(int rowIndex) {
+    StartCoroutine(TakeWork(rowIndex));
+  }
+
+  IEnumerator TakeWork(int rowIndex) {
+    while (operating) yield return null;
     operating = true;
-    held = viruses[rowIndex][0];
+    held = viruses[rowIndex].Find(e => e != null);
+    if (!held) { operating = false; yield break; }
     viruses[rowIndex].RemoveAt(0);
-    held.transform.parent = transform;
+    held.transform.SetParent(transform);
+    UpdateBoard();
     StartCoroutine(Move(held, transform.position + new Vector3(0, 0, 1), delegate() {
       operating = false;
     }));
-    UpdateBoard();
-    callback();
   }
 
-  public void Place(int rowIndex, Callback callback) {
+  public void Place(int rowIndex) {
+    StartCoroutine(PlaceWork(rowIndex));
+  }
+
+  IEnumerator PlaceWork(int rowIndex) {
+    while (operating) yield return null;
     operating = true;
     var row = viruses[rowIndex];
-    if (0 < row.Count && row[0].GetGrade() - held.GetGrade() == 1) {
-      if (1 < row.Count && row[1].GetGrade() - row[0].GetGrade() == 1) {
-        StartCoroutine(Move(held, row[0].transform.position, delegate() {
+    if (0 < row.Count && row[0] && row[0].GetGrade() - held.GetGrade() == 1) {
+      var willDestroy = held.gameObject;
+      var hp = held.GetHP();
+      StartCoroutine(Move(held, row[0].transform.position, delegate() {
+        row[0].Hit();
+        if (row[0] && 1 <= hp)
           row[0].Hit();
-          StartCoroutine(Move(row[0], row[1].transform.position, delegate() {
-            row[1].Hit();
-            row[1].Hit();
-            operating = false;
-          }));
-        }));
-      } else {
-        var willDestroy = held;
-        StartCoroutine(Move(held, row[0].transform.position, delegate() {
-          row[0].Hit();
-          Destroy(willDestroy.gameObject);
-          operating = false;
-        }));
-      }
-    } else {
-      row.Insert(0, held);
+        Destroy(willDestroy);
+        UpdateBoard();
+        operating = false;
+      }));
+      yield break;
     }
+    row.Insert(0, held);
     held.transform.parent = null;
     held = null;
     UpdateBoard();
-    callback();
+    operating = false;
   }
 
   void Burst(Virus target) {
+    operating = true;
     var pos = FindPos(target);
     if (pos.Length < 1) return;
     BurstPos(pos[0], pos[1]);
+    operating = false;
   }
 
   void BurstPos(int row, int line) {
@@ -153,11 +158,12 @@ public class VirusManager : MonoBehaviour {
     yield return new WaitForSeconds(0.2f);
     Instantiate(burst, v.transform.position, Quaternion.identity);
     Destroy(v.gameObject);
+    scoreManager.Point(10);
   }
 
   int[] FindPos(Virus target) {
     for (int row = 0; row < 5; ++row) {
-      var line = viruses[row].FindIndex(e => e.transform.position == target.transform.position);
+      var line = viruses[row].FindIndex(e => e.id == target.id);
       if (line != -1) {
         return new [] { row, line };
       }

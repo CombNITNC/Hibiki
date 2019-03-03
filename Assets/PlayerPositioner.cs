@@ -6,23 +6,17 @@ public class PlayerPositioner : MonoBehaviour {
   [SerializeField] float movableWidth = 4f;
   int position = 0;
 
-  public delegate void Callback();
-
-  public void MoveLeft(Callback callback) {
+  public void MoveLeft() {
     if (-2 < position) {
       --position;
-      StartCoroutine(Move(-1, callback));
-    } else {
-      callback();
+      StartCoroutine(Move(-1));
     }
   }
 
-  public void MoveRight(Callback callback) {
+  public void MoveRight() {
     if (position < 2) {
       ++position;
-      StartCoroutine(Move(1, callback));
-    } else {
-      callback();
+      StartCoroutine(Move(1));
     }
   }
 
@@ -30,7 +24,11 @@ public class PlayerPositioner : MonoBehaviour {
     return position;
   }
 
-  IEnumerator Move(int direction, Callback callback) {
+  bool atomic = false;
+
+  IEnumerator Move(int direction) {
+    while (atomic) yield return null;
+    atomic = true;
     float amount = direction * movableWidth / 5;
     float start = Time.time;
     var src = transform.position;
@@ -40,6 +38,6 @@ public class PlayerPositioner : MonoBehaviour {
       yield return null;
     }
     transform.position = dst;
-    callback();
+    atomic = false;
   }
 }
