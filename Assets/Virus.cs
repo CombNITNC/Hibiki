@@ -21,7 +21,7 @@ public class Virus : MonoBehaviour {
 
   int hitPoint = 0;
 
-  public void Activate() {
+  public void Hit() {
     ++hitPoint;
     if (2 <= hitPoint) {
       burster(this);

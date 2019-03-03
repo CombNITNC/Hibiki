@@ -29,15 +29,15 @@ using UnityEngine;
     } else if (Input.GetButtonDown("Capture")) {
       atomic = true;
       var held = viruses.GetHeld();
-      Debug.Log(held);
-      if (held != null)
+      if (held == null) {
         viruses.Take(2 + positioner.GetPosition(), delegate() {
           atomic = false;
         });
-      else
+      } else {
         viruses.Place(2 + positioner.GetPosition(), delegate() {
           atomic = false;
         });
+      }
     }
   }
 }

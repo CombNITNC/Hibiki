@@ -23,6 +23,8 @@ public class VirusManager : MonoBehaviour {
     StartCoroutine(SpawnWork());
   }
 
+  bool operating = false;
+
   IEnumerator SpawnWork() {
     while (true) {
       var pos = new Vector3(-2.4f, 0f, 15f);
@@ -33,11 +35,10 @@ public class VirusManager : MonoBehaviour {
         virus.SetBurster(Burst);
         row.Add(virus);
         pos += new Vector3(1.2f, 0f, 0f);
-        if (12 < row.Count)
-          state.Gameover();
       }
       UpdateBoard();
       yield return new WaitForSeconds(spawnRate);
+      yield return new WaitUntil(() => !operating);
     }
   }
 
@@ -46,13 +47,14 @@ public class VirusManager : MonoBehaviour {
   }
 
   void UpdateBoard() {
-    if (held) StartCoroutine(Move(held, transform.position));
     for (int row = 0; row < viruses.Count; ++row) {
+      viruses[row].RemoveAll(e => e == null);
       for (int line = 0; line < viruses[row].Count; ++line) {
         var virus = viruses[row][line];
         if (virus) Align(virus, row, line, viruses[row].Count);
       }
-      // CompressRow(viruses[row]);
+      if (11 < viruses[row].Count)
+        state.Gameover();
     }
   }
 
@@ -64,7 +66,7 @@ public class VirusManager : MonoBehaviour {
     StartCoroutine(Move(v, aligned));
   }
 
-  IEnumerator Move(Virus v, Vector3 to) {
+  IEnumerator Move(Virus v, Vector3 to, Callback callback = null) {
     var start = Time.time;
     var src = v.transform.position;
     while (Time.time - start < 0.13f) {
@@ -72,36 +74,48 @@ public class VirusManager : MonoBehaviour {
       yield return null;
     }
     v.transform.position = to;
-  }
-
-  void CompressRow(List<Virus> row) {
-    int nullCount = 0, index = 0;
-    do {
-      if (null == row[index]) {
-        ++nullCount;
-        ++index;
-      } else {
-        for (int i = 0; i < index - nullCount; ++i) {
-          row[i] = row[i + nullCount];
-        }
-        nullCount = index = 0;
-      }
-    } while (index <= 12);
-    row.RemoveAll(e => e == null);
+    if (callback != null) callback();
   }
 
   public delegate void Callback();
 
   public void Take(int rowIndex, Callback callback) {
+    operating = true;
     held = viruses[rowIndex][0];
     viruses[rowIndex].RemoveAt(0);
+    held.transform.parent = transform;
+    StartCoroutine(Move(held, transform.position + new Vector3(0, 0, 1), delegate() {
+      operating = false;
+    }));
     UpdateBoard();
     callback();
   }
 
   public void Place(int rowIndex, Callback callback) {
+    operating = true;
     var row = viruses[rowIndex];
-    row.Insert(0, held);
+    if (0 < row.Count && row[0].GetGrade() - held.GetGrade() == 1) {
+      if (1 < row.Count && row[1].GetGrade() - row[0].GetGrade() == 1) {
+        StartCoroutine(Move(held, row[0].transform.position, delegate() {
+          row[0].Hit();
+          StartCoroutine(Move(row[0], row[1].transform.position, delegate() {
+            row[1].Hit();
+            row[1].Hit();
+            operating = false;
+          }));
+        }));
+      } else {
+        var willDestroy = held;
+        StartCoroutine(Move(held, row[0].transform.position, delegate() {
+          row[0].Hit();
+          Destroy(willDestroy.gameObject);
+          operating = false;
+        }));
+      }
+    } else {
+      row.Insert(0, held);
+    }
+    held.transform.parent = null;
     held = null;
     UpdateBoard();
     callback();
@@ -109,31 +123,43 @@ public class VirusManager : MonoBehaviour {
 
   void Burst(Virus target) {
     var pos = FindPos(target);
-    if (2 <= pos.Length) return;
+    if (pos.Length < 1) return;
     BurstPos(pos[0], pos[1]);
   }
 
   void BurstPos(int row, int line) {
+    if (viruses[row][line] == null) return;
     var looking = viruses[row][line].GetGrade();
-    bool hasLeft = 0 < row, hasUp = 0 < line, hasRight = row < 5, hasDown = line < 13;
-    if (hasLeft && hasUp && viruses[row - 1][line - 1].GetGrade() == looking) BurstPos(row - 1, line - 1);
-    if (hasLeft && viruses[row - 1][line].GetGrade() == looking) BurstPos(row - 1, line);
-    if (hasUp && viruses[row][line - 1].GetGrade() == looking) BurstPos(row, line - 1);
-    if (hasRight && hasDown && viruses[row + 1][line + 1].GetGrade() == looking) BurstPos(row + 1, line + 1);
-    if (hasRight && viruses[row + 1][line].GetGrade() == looking) BurstPos(row + 1, line);
-    if (hasDown && viruses[row][line + 1].GetGrade() == looking) BurstPos(row, line + 1);
-    if (hasRight && hasUp && viruses[row + 1][line - 1].GetGrade() == looking) BurstPos(row + 1, line - 1);
-    if (hasLeft && hasDown && viruses[row - 1][line + 1].GetGrade() == looking) BurstPos(row - 1, line + 1);
-    Instantiate(burst, viruses[row][line].transform.position, Quaternion.identity);
-    Destroy(viruses[row][line].gameObject);
+    StartCoroutine(GenerateBursts(viruses[row][line]));
+    viruses[row][line] = null;
+    if (0 < row &&
+      line < viruses[row - 1].Count &&
+      viruses[row - 1][line] &&
+      viruses[row - 1][line].GetGrade() == looking) BurstPos(row - 1, line);
+    if (0 < line &&
+      line - 1 < viruses[row].Count &&
+      viruses[row][line - 1] &&
+      viruses[row][line - 1].GetGrade() == looking) BurstPos(row, line - 1);
+    if (row < viruses.Count - 1 &&
+      line < viruses[row + 1].Count &&
+      viruses[row + 1][line] &&
+      viruses[row + 1][line].GetGrade() == looking) BurstPos(row + 1, line);
+    if (line < viruses[row].Count - 1 &&
+      viruses[row][line + 1] &&
+      viruses[row][line + 1].GetGrade() == looking) BurstPos(row, line + 1);
+  }
+
+  IEnumerator GenerateBursts(Virus v) {
+    yield return new WaitForSeconds(0.2f);
+    Instantiate(burst, v.transform.position, Quaternion.identity);
+    Destroy(v.gameObject);
   }
 
   int[] FindPos(Virus target) {
     for (int row = 0; row < 5; ++row) {
-      for (int line = 0; line < 13; ++line) {
-        if (target == viruses[row][line]) {
-          return new int[] { row, line };
-        }
+      var line = viruses[row].FindIndex(e => e.transform.position == target.transform.position);
+      if (line != -1) {
+        return new [] { row, line };
       }
     }
     return new int[] { };
