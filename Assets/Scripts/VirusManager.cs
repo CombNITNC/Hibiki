@@ -13,15 +13,36 @@ public class VirusManager : MonoBehaviour {
 
   Ruling.Board board;
   Dictionary<Ruling.Virus.Id, Virus> viruses = new Dictionary<Ruling.Virus.Id, Virus>();
+  Ruling.Virus.Id heldId = Ruling.Virus.Id.Null;
 
   void Start() {
     var gcObj = GameObject.FindGameObjectWithTag("GameController");
     var gc = gcObj.GetComponent<GameController>();
+    gc.Move += OnMovePlayer;
     board = gc.board;
     board.Spawn += OnSpawn;
     board.Change += OnMove;
     board.Absorb += OnAbsorb;
     board.Break += OnBreak;
+  }
+
+  void OnMovePlayer(int _X) {
+    var founds = board.VirusFromId(heldId);
+    if (founds.Count() < 1) return;
+
+    var found = founds.First();
+    var v = viruses[heldId];
+    if (found.VirusPosition.IsHand) {
+      var dst = new Vector3(_X - 3, 0, 1);
+      v.Apply(dst, found.isCracked);
+    }
+  }
+
+  static Vector3 From(Ruling.Position pos) {
+    return new Vector3(
+      (pos.X - 3) * 1.5f,
+      0f, -pos.Y * 1.5f + 15f
+    );
   }
 
   void OnSpawn(Ruling.Virus v) {
@@ -41,10 +62,7 @@ public class VirusManager : MonoBehaviour {
     Virus.Attach(newVirus, crackedMesh);
     var virus = newVirus.GetComponent<Virus>();
     var pos = v.VirusPosition;
-    var to = new Vector3(
-      pos.X * 1.2f - 3.0f,
-      0f, -pos.Y * 1.2f + 15f
-    );
+    var to = From(pos);
     virus.Apply(to, false);
     viruses.Add(v.VirusId, virus);
   }
@@ -52,11 +70,9 @@ public class VirusManager : MonoBehaviour {
   void OnMove(Ruling.Virus.Id id, Ruling.Position from, Ruling.Position to) {
     var v = viruses[id];
     foreach (var found in board.VirusFromId(id)) {
-      var dst = new Vector3(
-        to.X * 1.2f - 3.0f,
-        0f, -to.Y * 1.2f + 15f
-      );
+      var dst = From(to);
       if (to.IsHand) {
+        heldId = id;
         dst = player.transform.position + new Vector3(0, 0, 1);
       }
       v.Apply(dst, found.isCracked);

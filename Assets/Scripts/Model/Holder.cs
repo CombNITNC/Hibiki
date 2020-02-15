@@ -1,7 +1,7 @@
 using System;
 namespace Ruling {
   public class Holder {
-    int x = 1;
+    int x = 3;
 
     public int X {
       get { return x; }
