@@ -45,6 +45,13 @@ namespace Ruling {
       }
     }
 
+    public void Where(Position position, Action<Virus> then) {
+      var founds = VirusFromPosition(pos => pos == position);
+      if (founds.Count() <= 0) return;
+      var found = founds.First();
+      then(found);
+    }
+
     void OnMove(int X) {
       holder.X = X;
       if (holder.HeldId != Virus.Id.Null) {
@@ -109,21 +116,18 @@ namespace Ruling {
         var up = to.WithY(to.Y - 1);
         if (1 <= VirusFromPosition(pos => pos == up).Count()) return;
 
-        var down = to.WithY(to.Y + 1);
-        if (VirusFromPosition(pos => pos == down).Count() <= 0) return;
-        var downer = VirusFromPosition(pos => pos == down).First();
-        Change.Invoke(downer.VirusId, downer.VirusPosition, to);
+        Where(to.WithY(to.Y + 1), downer => Change.Invoke(downer.VirusId, downer.VirusPosition, to));
       }
 
       // Place
       if (1 < to.Y && from == Position.Hand()) {
-        var up = to.WithY(to.Y - 1);
-        var upper = VirusFromPosition(pos => pos == up).First();
-        if (!(
-            (upper.VirusGrade == Virus.Grade.Big && changed.VirusGrade == Virus.Grade.Mid) ||
-            (upper.VirusGrade == Virus.Grade.Mid && changed.VirusGrade == Virus.Grade.Tiny)
-          )) return;
-        Absorb.Invoke(upper.VirusId, changed.VirusId);
+        Where(to.WithY(to.Y - 1), upper => {
+          if (!(
+              (upper.VirusGrade == Virus.Grade.Big && changed.VirusGrade == Virus.Grade.Mid) ||
+              (upper.VirusGrade == Virus.Grade.Mid && changed.VirusGrade == Virus.Grade.Tiny)
+            )) return;
+          Absorb.Invoke(upper.VirusId, changed.VirusId);
+        });
       }
     }
 
@@ -143,38 +147,29 @@ namespace Ruling {
       var brokenPos = broken.VirusPosition;
 
       if (1 < brokenPos.Y) {
-        var up = brokenPos.WithY(brokenPos.Y - 1);
-        var upper = VirusFromPosition(pos => pos == up).First();
-        if (upper.VirusGrade == broken.VirusGrade) {
-          var chain = Chain(upper.VirusId);
-        }
+        Where(brokenPos.WithY(brokenPos.Y - 1), upper => {
+          if (upper.VirusGrade == broken.VirusGrade) {
+            var chain = Chain(upper.VirusId);
+          }
+        });
       }
       if (1 < brokenPos.X) {
-        var left = brokenPos.WithX(brokenPos.X - 1);
-        var lefters = VirusFromPosition(pos => pos == left);
-        if (1 <= lefters.Count()) {
-          var lefter = lefters.First();
+        Where(brokenPos.WithX(brokenPos.X - 1), lefter => {
           if (lefter.VirusGrade == broken.VirusGrade) {
             var chain = Chain(lefter.VirusId);
           }
-        }
+        });
       }
       if (brokenPos.X < Width) {
-        var right = brokenPos.WithX(brokenPos.X + 1);
-        var righters = VirusFromPosition(pos => pos == right);
-        if (1 <= righters.Count()) {
-          var righter = righters.First();
+        Where(brokenPos.WithX(brokenPos.X + 1), righter => {
           if (righter.VirusGrade == broken.VirusGrade) {
             var chain = Chain(righter.VirusId);
           }
-        }
+        });
       }
-      var down = brokenPos.WithY(brokenPos.Y + 1);
-      var downers = VirusFromPosition(pos => pos == down);
-      if (1 <= downers.Count()) {
-        var downer = downers.First();
-        Change.Invoke(downer.VirusId, downer.VirusPosition, brokenPos);
-      }
+      Where(brokenPos.WithY(brokenPos.Y + 1), downer =>
+        Change.Invoke(downer.VirusId, downer.VirusPosition, brokenPos)
+      );
 
       crowd.Remove(broken);
     }
