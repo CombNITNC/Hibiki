@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Ruling {
@@ -103,14 +104,27 @@ namespace Ruling {
       var changed = VirusFromId(id).First();
       changed.VirusPosition = to;
 
-      if (to.Y <= 1 || from != Position.Hand()) return;
-      var up = to.WithY(to.Y - 1);
-      var upper = VirusFromPosition(pos => pos == up).First();
-      if (!(
-          (upper.VirusGrade == Virus.Grade.Big && changed.VirusGrade == Virus.Grade.Mid) ||
-          (upper.VirusGrade == Virus.Grade.Mid && changed.VirusGrade == Virus.Grade.Tiny)
-        )) return;
-      Absorb.Invoke(upper.VirusId, changed.VirusId);
+      // Pull up
+      if (1 < to.Y && to.Y < from.Y) {
+        var up = to.WithY(to.Y - 1);
+        if (1 <= VirusFromPosition(pos => pos == up).Count()) return;
+
+        var down = to.WithY(to.Y + 1);
+        if (VirusFromPosition(pos => pos == down).Count() <= 0) return;
+        var downer = VirusFromPosition(pos => pos == down).First();
+        Change.Invoke(downer.VirusId, downer.VirusPosition, to);
+      }
+
+      // Place
+      if (1 < to.Y && from == Position.Hand()) {
+        var up = to.WithY(to.Y - 1);
+        var upper = VirusFromPosition(pos => pos == up).First();
+        if (!(
+            (upper.VirusGrade == Virus.Grade.Big && changed.VirusGrade == Virus.Grade.Mid) ||
+            (upper.VirusGrade == Virus.Grade.Mid && changed.VirusGrade == Virus.Grade.Tiny)
+          )) return;
+        Absorb.Invoke(upper.VirusId, changed.VirusId);
+      }
     }
 
     void OnAbsorb(Virus.Id eaterId, Virus.Id eatenId) {
@@ -126,7 +140,48 @@ namespace Ruling {
 
     void OnBreak(Virus.Id brokenId) {
       var broken = VirusFromId(brokenId).First();
+      var brokenPos = broken.VirusPosition;
+
+      if (1 < brokenPos.Y) {
+        var up = brokenPos.WithY(brokenPos.Y - 1);
+        var upper = VirusFromPosition(pos => pos == up).First();
+        if (upper.VirusGrade == broken.VirusGrade) {
+          var chain = Chain(upper.VirusId);
+        }
+      }
+      if (1 < brokenPos.X) {
+        var left = brokenPos.WithX(brokenPos.X - 1);
+        var lefters = VirusFromPosition(pos => pos == left);
+        if (1 <= lefters.Count()) {
+          var lefter = lefters.First();
+          if (lefter.VirusGrade == broken.VirusGrade) {
+            var chain = Chain(lefter.VirusId);
+          }
+        }
+      }
+      if (brokenPos.X < Width) {
+        var right = brokenPos.WithX(brokenPos.X + 1);
+        var righters = VirusFromPosition(pos => pos == right);
+        if (1 <= righters.Count()) {
+          var righter = righters.First();
+          if (righter.VirusGrade == broken.VirusGrade) {
+            var chain = Chain(righter.VirusId);
+          }
+        }
+      }
+      var down = brokenPos.WithY(brokenPos.Y + 1);
+      var downers = VirusFromPosition(pos => pos == down);
+      if (1 <= downers.Count()) {
+        var downer = downers.First();
+        Change.Invoke(downer.VirusId, downer.VirusPosition, brokenPos);
+      }
+
       crowd.Remove(broken);
+    }
+
+    async Task Chain(Virus.Id toBreak) {
+      await Task.Delay(130);
+      Break.Invoke(toBreak);
     }
 
     public event EventFromModel.Spawn Spawn;
