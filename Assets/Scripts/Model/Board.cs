@@ -45,13 +45,29 @@ namespace Ruling {
 
     void OnMove(int X) {
       holder.X = X;
+      if (holder.HeldId != Virus.Id.Null) {
+        var toPlace = VirusFromId(holder.HeldId).First();
+        Change.Invoke(toPlace.VirusId, Position.Hand(), Position.Hand());
+      }
     }
 
     void OnManipulate() {
       if (holder.HeldId == Virus.Id.Null) {
-        var toTake = VirusFromPosition(pos => pos.X == holder.X).Max(v => v.VirusPosition.Y);
+        foreach (var toTake in VirusFromPosition(pos => pos.X == holder.X).OrderByDescending(v => v.VirusPosition.Y)) {
+          holder.HeldId = toTake.VirusId;
+          Change.Invoke(toTake.VirusId, toTake.VirusPosition, Position.Hand());
+        }
       } else {
-
+        foreach (var toPlace in VirusFromId(holder.HeldId)) {
+          var end = crowd.Select(v => v.VirusPosition)
+            .Where(pos => pos.X == holder.X)
+            .OrderByDescending(pos => pos.Y)
+            .Select(pos => pos.Y)
+            .DefaultIfEmpty(1)
+            .First();
+          Change.Invoke(toPlace.VirusId, Position.Hand(), Position.OnBoard(holder.X, end));
+        }
+        holder.HeldId = Virus.Id.Null;
       }
     }
 
@@ -68,7 +84,7 @@ namespace Ruling {
       var grades = Enum.GetValues(typeof(Virus.Grade));
       var newRow = Enumerable.Range(1, Width).Select(i => {
         var v = new Virus();
-        v.VirusPosition = new Position(i, 1);
+        v.VirusPosition = Position.OnBoard(i, 1);
         v.VirusGrade = (Virus.Grade) grades.GetValue(rand.Next(grades.Length));
         return v;
       });

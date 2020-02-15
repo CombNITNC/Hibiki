@@ -11,17 +11,13 @@ public class Virus : MonoBehaviour {
 
   Coroutine moveWork = null;
 
-  public void Apply(Ruling.Virus toShow) {
-    if (toShow.isCracked) {
+  public void Apply(Vector3 to, bool isCracked) {
+    if (isCracked) {
       GetComponent<MeshFilter>().mesh = cracked;
     }
-    var pos = toShow.VirusPosition;
 
     if (moveWork != null) StopCoroutine(moveWork);
-    moveWork = StartCoroutine(MoveWork(new Vector3(
-      pos.X * 1.2f - 3.0f,
-      0f, -pos.Y * 1.2f + 15f
-    )));
+    moveWork = StartCoroutine(MoveWork(to));
   }
 
   IEnumerator MoveWork(Vector3 to) {

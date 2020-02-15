@@ -26,6 +26,10 @@ public class GameController : MonoBehaviour, BoardOperator {
       Drop.Invoke();
       lastEventTime = Time.time;
     }
+    if (Input.GetButtonDown("Capture")) {
+      Manipulate.Invoke();
+      lastEventTime = Time.time;
+    }
     if (lastEventTime + spawnRateMs <= Time.time) {
       Drop.Invoke();
     }

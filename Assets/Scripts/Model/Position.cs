@@ -1,21 +1,30 @@
 using System;
 namespace Ruling {
   public struct Position {
-    public readonly int X, Y;
+    public readonly int X;
+    public readonly int Y;
+    public readonly bool IsHand;
 
-    public Position(int x, int y) {
+    private Position(int x, int y, bool isHand) {
+      X = x;
+      Y = y;
+      IsHand = isHand;
+    }
+    public static Position OnBoard(int x, int y) {
       if (!(1 <= x && x <= Board.Width && 1 <= y && y <= Board.Height)) {
         throw new ArgumentOutOfRangeException();
       }
-      X = x;
-      Y = y;
+      return new Position(x, y, false);
+    }
+    public static Position Hand() {
+      return new Position(0, 0, true);
     }
 
     public Position WithX(int newX) {
-      return new Position(newX, Y);
+      return Position.OnBoard(newX, Y);
     }
     public Position WithY(int newY) {
-      return new Position(X, newY);
+      return Position.OnBoard(X, newY);
     }
 
     public override bool Equals(object obj) {
