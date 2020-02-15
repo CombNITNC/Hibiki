@@ -1,18 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public enum EnemyGrade {
-  None,
-  Small,
-  Medium,
-  Large
-}
+﻿using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
 public class Virus : MonoBehaviour {
 
-  [SerializeField] EnemyGrade grade = EnemyGrade.None;
+  [SerializeField] Ruling.Virus.Grade grade;
   [SerializeField] Mesh cracked;
 
   int hitPoint = 0;
@@ -21,7 +12,7 @@ public class Virus : MonoBehaviour {
 
   public readonly int id = ++globalId;
 
-  public EnemyGrade GetGrade() {
+  public Ruling.Virus.Grade GetGrade() {
     return grade;
   }
 
