@@ -931,6 +931,7 @@ GameObject:
   - component: {fileID: 1301023367}
   - component: {fileID: 1301023366}
   - component: {fileID: 1301023368}
+  - component: {fileID: 1301023369}
   m_Layer: 0
   m_Name: GameController
   m_TagString: GameController
@@ -986,6 +987,19 @@ MonoBehaviour:
     type: 3}
   positioner: {fileID: 262670792}
   crackedMesh: {fileID: 4300000, guid: 503053e49311f45f1a0d70eed4d9c356, type: 3}
+--- !u!114 &1301023369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1301023365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fab5575f7388641498e41958d1e14651, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  display: {fileID: 1481206503}
 --- !u!1 &1481206501
 GameObject:
   m_ObjectHideFlags: 0
