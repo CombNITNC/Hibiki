@@ -14,6 +14,7 @@ namespace Ruling {
     public static readonly int Width = 5, Height = 12;
     List<Virus> crowd = new List<Virus>(Width * Height);
     Holder holder = new Holder();
+    System.Random rand = new System.Random();
 
     public Board(BoardOperator op) {
       op.Move += OnMove;
@@ -53,20 +54,22 @@ namespace Ruling {
 
     void OnManipulate() {
       if (holder.HeldId == Virus.Id.Null) {
-        foreach (var toTake in VirusFromPosition(pos => pos.X == holder.X).OrderByDescending(v => v.VirusPosition.Y)) {
-          holder.HeldId = toTake.VirusId;
-          Change.Invoke(toTake.VirusId, toTake.VirusPosition, Position.Hand());
-        }
+        var column = VirusFromPosition(pos => pos.X == holder.X).OrderByDescending(v => v.VirusPosition.Y);
+        if (column.Count() < 1) return;
+
+        var toTake = column.First();
+        holder.HeldId = toTake.VirusId;
+        Change.Invoke(toTake.VirusId, toTake.VirusPosition, Position.Hand());
       } else {
-        foreach (var toPlace in VirusFromId(holder.HeldId)) {
-          var end = crowd.Select(v => v.VirusPosition)
-            .Where(pos => pos.X == holder.X)
-            .OrderByDescending(pos => pos.Y)
-            .Select(pos => pos.Y)
-            .DefaultIfEmpty(1)
-            .First();
-          Change.Invoke(toPlace.VirusId, Position.Hand(), Position.OnBoard(holder.X, end));
-        }
+        var toPlace = VirusFromId(holder.HeldId).First();
+        var end = crowd.Select(v => v.VirusPosition)
+          .Where(pos => pos.X == holder.X)
+          .OrderByDescending(pos => pos.Y)
+          .Select(pos => pos.Y + 1)
+          .DefaultIfEmpty(1)
+          .First();
+        Change.Invoke(toPlace.VirusId, Position.Hand(), Position.OnBoard(holder.X, end));
+
         holder.HeldId = Virus.Id.Null;
       }
     }
@@ -80,7 +83,6 @@ namespace Ruling {
         );
       }
 
-      var rand = new System.Random();
       var grades = Enum.GetValues(typeof(Virus.Grade));
       var newRow = Enumerable.Range(1, Width).Select(i => {
         var v = new Virus();
@@ -98,17 +100,33 @@ namespace Ruling {
     }
 
     void OnChange(Virus.Id id, Position from, Position to) {
-      foreach (var found in VirusFromId(id)) {
-        found.VirusPosition = to;
+      var changed = VirusFromId(id).First();
+      changed.VirusPosition = to;
+
+      if (to.Y <= 1 || from != Position.Hand()) return;
+      var up = to.WithY(to.Y - 1);
+      var upper = VirusFromPosition(pos => pos == up).First();
+      if (!(
+          (upper.VirusGrade == Virus.Grade.Big && changed.VirusGrade == Virus.Grade.Mid) ||
+          (upper.VirusGrade == Virus.Grade.Mid && changed.VirusGrade == Virus.Grade.Tiny)
+        )) return;
+      Absorb.Invoke(upper.VirusId, changed.VirusId);
+    }
+
+    void OnAbsorb(Virus.Id eaterId, Virus.Id eatenId) {
+      var eaten = VirusFromId(eatenId).First();
+      crowd.Remove(eaten);
+
+      var eater = VirusFromId(eaterId).First();
+      if (eater.isCracked || eaten.isCracked) {
+        Break.Invoke(eaterId);
       }
+      eater.isCracked = true;
     }
 
-    void OnAbsorb(Virus.Id eater, Virus.Id eaten) {
-
-    }
-
-    void OnBreak(Virus.Id broken) {
-
+    void OnBreak(Virus.Id brokenId) {
+      var broken = VirusFromId(brokenId).First();
+      crowd.Remove(broken);
     }
 
     public event EventFromModel.Spawn Spawn;

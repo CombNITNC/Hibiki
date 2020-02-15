@@ -29,9 +29,9 @@ namespace Ruling {
     public readonly Id VirusId = new Id();
 
     public enum Grade {
-      Tiny,
+      Big,
       Mid,
-      Big
+      Tiny,
     }
 
     public Grade VirusGrade;

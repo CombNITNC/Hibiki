@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class VirusManager : MonoBehaviour {
   [SerializeField] GameObject burst = null;
-  [SerializeField] GameObject[] spawnableEnemies = new GameObject[3];
-  [SerializeField] GameObject player;
+  [SerializeField] GameObject bigEnemy = null;
+  [SerializeField] GameObject midEnemy = null;
+  [SerializeField] GameObject tinyEnemy = null;
+  [SerializeField] GameObject player = null;
+  [SerializeField] Mesh crackedMesh = null;
 
   Ruling.Board board;
   Dictionary<Ruling.Virus.Id, Virus> viruses = new Dictionary<Ruling.Virus.Id, Virus>();
@@ -17,13 +20,25 @@ public class VirusManager : MonoBehaviour {
     board = gc.board;
     board.Spawn += OnSpawn;
     board.Change += OnMove;
+    board.Absorb += OnAbsorb;
     board.Break += OnBreak;
   }
 
   void OnSpawn(Ruling.Virus v) {
-    var enemyBase = spawnableEnemies[Random.Range(0, spawnableEnemies.Length)];
+    GameObject enemyBase = null;
+    switch (v.VirusGrade) {
+      case Ruling.Virus.Grade.Big:
+        enemyBase = bigEnemy;
+        break;
+      case Ruling.Virus.Grade.Mid:
+        enemyBase = midEnemy;
+        break;
+      case Ruling.Virus.Grade.Tiny:
+        enemyBase = tinyEnemy;
+        break;
+    }
     var newVirus = Instantiate(enemyBase, Vector3.zero, Quaternion.identity);
-    Virus.Attach(newVirus);
+    Virus.Attach(newVirus, crackedMesh);
     var virus = newVirus.GetComponent<Virus>();
     var pos = v.VirusPosition;
     var to = new Vector3(
@@ -48,17 +63,27 @@ public class VirusManager : MonoBehaviour {
     }
   }
 
-  Coroutine burstWork = null;
+  void OnAbsorb(Ruling.Virus.Id eaterId, Ruling.Virus.Id eatenId) {
+    var eater = viruses[eaterId];
+    eater.Apply(eater.gameObject.transform.position, true);
+    viruses[eatenId].Apply(eater.gameObject.transform.position, false);
+    StartCoroutine(AbsorbWork(eatenId));
+  }
+
+  IEnumerator AbsorbWork(Ruling.Virus.Id eatenId) {
+    yield return new WaitForSeconds(0.2f);
+    Destroy(viruses[eatenId].gameObject);
+  }
 
   void OnBreak(Ruling.Virus.Id id) {
     var v = viruses[id];
-    if (burstWork != null) StopCoroutine(burstWork);
-    burstWork = StartCoroutine(GenerateBursts(v));
+    var pos = v.transform.position;
+    Destroy(v.gameObject);
+    StartCoroutine(GenerateBursts(pos));
   }
 
-  IEnumerator GenerateBursts(Virus v) {
+  IEnumerator GenerateBursts(Vector3 pos) {
     yield return new WaitForSeconds(0.2f);
-    Instantiate(burst, v.transform.position, Quaternion.identity);
-    Destroy(v.gameObject);
+    Instantiate(burst, pos, Quaternion.identity);
   }
 }

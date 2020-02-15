@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(MeshFilter))]
 public class Virus : MonoBehaviour {
-  [SerializeField] Mesh cracked;
+  Mesh cracked;
 
-  public static void Attach(GameObject go) {
+  public static void Attach(GameObject go, Mesh crackedMesh) {
     var obj = go.AddComponent<Virus>();
+    obj.cracked = crackedMesh;
   }
 
   Coroutine moveWork = null;
