@@ -4,21 +4,23 @@ using UnityEngine;
 public class PlayerPositioner : MonoBehaviour {
   [SerializeField] float movableWidth = 4f;
 
-  int prevPos = 3;
+  int currentPos = 3;
 
   void Start() {
     var gc = GameObject.FindWithTag("GameController").GetComponent<GameController>();
     gc.Move += pos => {
       if (moveWork != null) StopCoroutine(moveWork);
-      moveWork = StartCoroutine(Move(pos - prevPos));
-      prevPos = pos;
+      moveWork = StartCoroutine(Move(pos - currentPos));
+      currentPos = pos;
     };
   }
+
+  public float CurrentPos() { return (currentPos - 3) * movableWidth / Ruling.Board.Width; }
 
   Coroutine moveWork = null;
 
   IEnumerator Move(int direction) {
-    float amount = direction * movableWidth / 5f;
+    float amount = direction * movableWidth / Ruling.Board.Width;
     float start = Time.time;
     var src = transform.position;
     var dst = src + new Vector3(amount, 0f, 0f);

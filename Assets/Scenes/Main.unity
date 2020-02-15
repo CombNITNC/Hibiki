@@ -462,7 +462,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60f3c0ba4ddf84546b4c474d60f78902, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movableWidth: 6
+  movableWidth: 8
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0
@@ -984,7 +984,7 @@ MonoBehaviour:
     type: 3}
   tinyEnemy: {fileID: 1377608698943809507, guid: 9ed24a1382d5343818785ac08a889a0b,
     type: 3}
-  player: {fileID: 262670785}
+  positioner: {fileID: 262670792}
   crackedMesh: {fileID: 4300000, guid: 503053e49311f45f1a0d70eed4d9c356, type: 3}
 --- !u!1 &1481206501
 GameObject:

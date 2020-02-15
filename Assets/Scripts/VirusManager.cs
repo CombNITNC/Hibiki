@@ -8,7 +8,7 @@ public class VirusManager : MonoBehaviour {
   [SerializeField] GameObject bigEnemy = null;
   [SerializeField] GameObject midEnemy = null;
   [SerializeField] GameObject tinyEnemy = null;
-  [SerializeField] GameObject player = null;
+  [SerializeField] PlayerPositioner positioner = null;
   [SerializeField] Mesh crackedMesh = null;
 
   Ruling.Board board;
@@ -33,7 +33,7 @@ public class VirusManager : MonoBehaviour {
     var found = founds.First();
     var v = viruses[heldId];
     if (found.VirusPosition.IsHand) {
-      var dst = new Vector3(_X - 3, 0, 1);
+      var dst = new Vector3(positioner.CurrentPos(), 0, 1);
       v.Apply(dst, found.isCracked);
     }
   }
@@ -73,7 +73,7 @@ public class VirusManager : MonoBehaviour {
       var dst = From(to);
       if (to.IsHand) {
         heldId = id;
-        dst = player.transform.position + new Vector3(0, 0, 1);
+        dst = new Vector3(positioner.CurrentPos(), 0, 1);
       }
       v.Apply(dst, found.isCracked);
     }
