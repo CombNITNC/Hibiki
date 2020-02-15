@@ -58,7 +58,7 @@ public class VirusManager : MonoBehaviour {
         enemyBase = tinyEnemy;
         break;
     }
-    var newVirus = Instantiate(enemyBase, Vector3.zero, Quaternion.identity);
+    var newVirus = Instantiate(enemyBase, new Vector3(0, 0, 50), Quaternion.identity);
     Virus.Attach(newVirus, crackedMesh);
     var virus = newVirus.GetComponent<Virus>();
     var pos = v.VirusPosition;

@@ -1,37 +1,44 @@
+using System.Collections;
 using Ruling;
 using UnityEngine;
 
 public class GameController : MonoBehaviour, BoardOperator {
+
+  [SerializeField] float spawnRateMs = 7.5f;
+
   public Board board { get; private set; }
   int playerPos = 3;
-  float lastEventTime = 0;
-
-  [SerializeField] float spawnRateMs = 7500f;
+  float dropTimer = 0;
 
   void Start() {
     board = new Board(this);
-    lastEventTime = Time.time;
+    StartCoroutine(GameSetup());
+  }
+
+  IEnumerator GameSetup() {
+    yield return new WaitForSeconds(1.0f);
+    Drop.Invoke();
+    Drop.Invoke();
   }
 
   void Update() {
     if (Input.GetButtonDown("Left") && 1 < playerPos) {
       Move.Invoke(--playerPos);
-      lastEventTime = Time.time;
     }
     if (Input.GetButtonDown("Right") && playerPos < 5) {
       Move.Invoke(++playerPos);
-      lastEventTime = Time.time;
-    }
-    if (Input.GetButtonDown("Drop")) {
-      Drop.Invoke();
-      lastEventTime = Time.time;
     }
     if (Input.GetButtonDown("Capture")) {
       Manipulate.Invoke();
-      lastEventTime = Time.time;
     }
-    if (lastEventTime + spawnRateMs <= Time.time) {
+    if (Input.GetButtonDown("Drop")) {
       Drop.Invoke();
+      dropTimer = 0f;
+    }
+    dropTimer += Time.deltaTime;
+    if (spawnRateMs <= dropTimer) {
+      Drop.Invoke();
+      dropTimer = 0f;
     }
   }
 

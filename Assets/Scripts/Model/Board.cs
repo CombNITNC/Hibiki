@@ -85,6 +85,7 @@ namespace Ruling {
     void OnDrop() {
       // Shift all virus down
       foreach (var v in crowd) {
+        if (v.VirusPosition.IsHand) continue;
         Change.Invoke(v.VirusId,
           v.VirusPosition,
           v.VirusPosition.WithY(v.VirusPosition.Y + 1)
@@ -113,9 +114,6 @@ namespace Ruling {
 
       // Pull up
       if (1 < to.Y && to.Y < from.Y) {
-        var up = to.WithY(to.Y - 1);
-        if (1 <= VirusFromPosition(pos => pos == up).Count()) return;
-
         Where(to.WithY(to.Y + 1), downer => Change.Invoke(downer.VirusId, downer.VirusPosition, to));
       }
 
