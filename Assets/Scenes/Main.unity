@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.49641287, b: 0.5748173, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -169,8 +169,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: a297dcff4df234f619fc37e4a3c10d6b, type: 3}
     m_FontSize: 188
@@ -202,7 +200,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 23133689}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 248ed6f7e05b8457baf16649903966f9, type: 3}
+  m_Script: {fileID: 11500000, guid: c7ea265416ff747209813d33677118ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &46348900
@@ -385,10 +383,7 @@ GameObject:
   - component: {fileID: 262670789}
   - component: {fileID: 262670788}
   - component: {fileID: 262670787}
-  - component: {fileID: 262670790}
   - component: {fileID: 262670792}
-  - component: {fileID: 262670786}
-  - component: {fileID: 262670793}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -396,19 +391,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &262670786
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 262670785}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11fffa9c0201c4d209a5fd0c6abe64ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  display: {fileID: 1481206503}
 --- !u!23 &262670787
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -468,19 +450,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &262670790
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 262670785}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 518b640cc29ef45e3b3b18e395937e85, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movableWidth: 5.5
 --- !u!114 &262670792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -490,28 +459,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 262670785}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d442c449aa25d4160a5fd1d6c7520286, type: 3}
+  m_Script: {fileID: 11500000, guid: 60f3c0ba4ddf84546b4c474d60f78902, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &262670793
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 262670785}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 675c1c454f84b4359b7ab30b3f432f2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  burst: {fileID: 8400931172028890220, guid: 7ec4de31ab60a41e4a3356bb9a016d6d, type: 3}
-  spawnableEnemies:
-  - {fileID: 4131310205499404924, guid: ff3d5f3b7d6cb46049b42c362d57f906, type: 3}
-  - {fileID: 6775560326379179903, guid: c5920fc4b55bc450988e5152bf0ddef9, type: 3}
-  - {fileID: 1377608698943809507, guid: 9ed24a1382d5343818785ac08a889a0b, type: 3}
-  - {fileID: 4131310205499404924, guid: ff3d5f3b7d6cb46049b42c362d57f906, type: 3}
-  spawnRate: 3.5
+  movableWidth: 6
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0
@@ -587,13 +538,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 534669902}
-  m_LocalRotation: {x: 0.06148409, y: 0, z: 0, w: 0.9981081}
-  m_LocalPosition: {x: 0, y: 3.05, z: -10}
+  m_LocalRotation: {x: 0.14314716, y: 0, z: 0, w: 0.98970145}
+  m_LocalPosition: {x: 0, y: 4.82, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 7.05, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 16.46, y: 0, z: 0}
 --- !u!1 &746711817
 GameObject:
   m_ObjectHideFlags: 0
@@ -864,7 +815,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1017312301}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 675c39aa43d784e77a41a1731e894a08, type: 3}
+  m_Script: {fileID: 11500000, guid: d466d662c89c4429a8b4e2863942c205, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!82 &1017312303
@@ -989,12 +940,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1301023365}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f764d458e06843dfa466dab82564e45, type: 3}
+  m_Script: {fileID: 11500000, guid: 5d593969f008548f5bb9982ac03f050c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameoverDisplay: {fileID: 23133689}
-  player: {fileID: 262670789}
-  burst: {fileID: 7396970453755558439, guid: 211034f687f9d45189086b0bcab7be0b, type: 3}
 --- !u!4 &1301023367
 Transform:
   m_ObjectHideFlags: 0
@@ -1064,8 +1012,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: a297dcff4df234f619fc37e4a3c10d6b, type: 3}
     m_FontSize: 106
@@ -1297,8 +1243,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: a297dcff4df234f619fc37e4a3c10d6b, type: 3}
     m_FontSize: 155

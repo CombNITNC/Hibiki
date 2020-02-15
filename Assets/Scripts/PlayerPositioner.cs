@@ -3,32 +3,22 @@ using UnityEngine;
 
 public class PlayerPositioner : MonoBehaviour {
   [SerializeField] float movableWidth = 4f;
-  int position = 0;
 
-  public void MoveLeft() {
-    if (-2 < position) {
-      --position;
-      StartCoroutine(Move(-1));
-    }
+  int prevPos = 3;
+
+  void Start() {
+    var gc = GameObject.FindWithTag("GameController").GetComponent<GameController>();
+    gc.Move += pos => {
+      if (moveWork != null) StopCoroutine(moveWork);
+      moveWork = StartCoroutine(Move(pos - prevPos));
+      prevPos = pos;
+    };
   }
 
-  public void MoveRight() {
-    if (position < 2) {
-      ++position;
-      StartCoroutine(Move(1));
-    }
-  }
-
-  public int GetPosition() {
-    return position;
-  }
-
-  bool atomic = false;
+  Coroutine moveWork = null;
 
   IEnumerator Move(int direction) {
-    while (atomic) yield return null;
-    atomic = true;
-    float amount = direction * movableWidth / 5;
+    float amount = direction * movableWidth / 5f;
     float start = Time.time;
     var src = transform.position;
     var dst = src + new Vector3(amount, 0f, 0f);
@@ -37,6 +27,5 @@ public class PlayerPositioner : MonoBehaviour {
       yield return null;
     }
     transform.position = dst;
-    atomic = false;
   }
 }

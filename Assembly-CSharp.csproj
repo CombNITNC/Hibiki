@@ -53,15 +53,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\GameState.cs" />
-     <Compile Include="Assets\ParticleDisposer.cs" />
-     <Compile Include="Assets\PlayerController.cs" />
-     <Compile Include="Assets\PlayerPositioner.cs" />
-     <Compile Include="Assets\Rotator.cs" />
-     <Compile Include="Assets\SceneReloader.cs" />
-     <Compile Include="Assets\ScoreManager.cs" />
-     <Compile Include="Assets\Virus.cs" />
-     <Compile Include="Assets\VirusManager.cs" />
+     <Compile Include="Assets\Scripts\GameController.cs" />
+     <Compile Include="Assets\Scripts\GameState.cs" />
+     <Compile Include="Assets\Scripts\Model\Board.cs" />
+     <Compile Include="Assets\Scripts\Model\Event.cs" />
+     <Compile Include="Assets\Scripts\Model\Holder.cs" />
+     <Compile Include="Assets\Scripts\Model\Position.cs" />
+     <Compile Include="Assets\Scripts\Model\Virus.cs" />
+     <Compile Include="Assets\Scripts\ParticleDisposer.cs" />
+     <Compile Include="Assets\Scripts\PlayerPositioner.cs" />
+     <Compile Include="Assets\Scripts\Rotator.cs" />
+     <Compile Include="Assets\Scripts\SceneReloader.cs" />
+     <Compile Include="Assets\Scripts\ScoreManager.cs" />
+     <Compile Include="Assets\Scripts\Virus.cs" />
+     <Compile Include="Assets\Scripts\VirusManager.cs" />
  <Reference Include="Unity.TextMeshPro.Editor">
  <HintPath>/Users/rkeclair/Documents/Projects/Games/hibiki/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
  </Reference>
