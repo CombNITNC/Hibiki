@@ -1,38 +1,36 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
 public class Virus : MonoBehaviour {
-
-  [SerializeField] Ruling.Virus.Grade grade;
   [SerializeField] Mesh cracked;
 
-  int hitPoint = 0;
-
-  static int globalId = 0;
-
-  public readonly int id = ++globalId;
-
-  public Ruling.Virus.Grade GetGrade() {
-    return grade;
+  public static void Attach(GameObject go) {
+    var obj = go.AddComponent<Virus>();
   }
 
-  public int GetHP() {
-    return hitPoint;
-  }
+  Coroutine moveWork = null;
 
-  public void Hit() {
-    ++hitPoint;
-    if (2 <= hitPoint) {
-      burster(this);
-    } else if (1 == hitPoint) {
+  public void Apply(Ruling.Virus toShow) {
+    if (toShow.isCracked) {
       GetComponent<MeshFilter>().mesh = cracked;
     }
+    var pos = toShow.VirusPosition;
+
+    if (moveWork != null) StopCoroutine(moveWork);
+    moveWork = StartCoroutine(MoveWork(new Vector3(
+      pos.X * 1.2f - 3.0f,
+      0f, -pos.Y * 1.2f + 15f
+    )));
   }
 
-  public delegate void Burster(Virus target);
-  Burster burster;
-
-  public void SetBurster(Burster func) {
-    burster = func;
+  IEnumerator MoveWork(Vector3 to) {
+    var start = Time.time;
+    var src = transform.position;
+    while (Time.time - start < 0.13f) {
+      transform.position = Vector3.Lerp(src, to, (Time.time - start) / 0.13f);
+      yield return null;
+    }
+    transform.position = to;
   }
 }

@@ -36,5 +36,6 @@ namespace Ruling {
 
     public Grade VirusGrade;
     public Position VirusPosition;
+    public bool isCracked = false;
   }
 }

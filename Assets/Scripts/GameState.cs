@@ -2,9 +2,9 @@
 using UnityEngine;
 
 public class GameState : MonoBehaviour {
-  [SerializeField] GameObject gameoverDisplay;
-  [SerializeField] Transform player;
-  [SerializeField] GameObject burst;
+  [SerializeField] GameObject gameoverDisplay = null;
+  [SerializeField] GameObject player = null;
+  [SerializeField] GameObject burst = null;
   bool isOver = false;
 
   public void Gameover() {
@@ -16,7 +16,7 @@ public class GameState : MonoBehaviour {
   IEnumerator GameoverWork() {
     yield return new WaitForSeconds(1f);
     gameoverDisplay.SetActive(true);
-    Instantiate(burst, player.position, Quaternion.identity);
-    Destroy(player.gameObject);
+    Instantiate(burst, player.transform.position, Quaternion.identity);
+    Destroy(player);
   }
 }
